@@ -104,8 +104,12 @@ function Alternate:__call(tokens, pos)
   end
 end
 
-local function opt(parser, tokens, pos)
-  local result = parser(tokens, pos)
+local Opt = class(function (o, parser)
+  o.parser = parser
+end)
+
+function Opt:__call(tokens, pos)
+  local result = self.parser(tokens, pos)
   if result then
     return result
   else
@@ -132,7 +136,7 @@ return {
   Tag = Tag,
   Concat = Concat,
   Alternate = Alternate,
-  opt = opt,
+  Opt = Opt,
   rep = rep
 }
 
