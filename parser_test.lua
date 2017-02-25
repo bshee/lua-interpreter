@@ -52,4 +52,20 @@ test.addTest("Concat apply", function()
   test.assertEqual(r, parser.Result({10, 11}, 3))
 end)
 
+test.addTest("Alternate left only", function()
+  local alt = parser.Alternate(parser.Tag("simple"), parser.Tag("no"))
+  test.assertEqual(
+    alt({Token("value", "simple")}, 1), 
+    parser.Result("value", 2)
+  )
+end)
+
+test.addTest("Alternate right only", function()
+  local alt = parser.Alternate(parser.Tag("no"), parser.Tag("simple"))
+  test.assertEqual(
+    alt({Token("value2", "simple")}, 1), 
+    parser.Result("value2", 2)
+  )
+end)
+
 test.runTests()

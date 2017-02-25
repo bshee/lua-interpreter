@@ -90,12 +90,17 @@ function Concat:__call(tokens, pos)
   return nil
 end
 
-local function alternate(left, right, tokens, pos)
-  local leftResult = left(tokens, pos)
+local Alternate = class(function (a, left, right)
+  a.left = left
+  a.right = right
+end)
+
+function Alternate:__call(tokens, pos)
+  local leftResult = self.left(tokens, pos)
   if leftResult then
     return leftResult
   else
-    return right(tokens, pos)
+    return self.right(tokens, pos)
   end
 end
 
@@ -126,7 +131,7 @@ return {
   Reserved = Reserved,
   Tag = Tag,
   Concat = Concat,
-  alternate = alternate,
+  Alternate = Alternate,
   opt = opt,
   rep = rep
 }
