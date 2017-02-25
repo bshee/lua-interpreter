@@ -69,18 +69,26 @@ test.addTest("Alternate right only", function()
 end)
 
 test.addTest("Opt correct parse", function()
-  local alt = parser.Opt(parser.Tag("simple"))
+  local opt = parser.Opt(parser.Tag("simple"))
   test.assertEqual(
-    alt({Token("optical", "simple")}, 1), 
+    opt({Token("optical", "simple")}, 1), 
     parser.Result("optical", 2)
   )
 end)
 
 test.addTest("Opt no parse", function()
-  local alt = parser.Opt(parser.Tag("no"))
+  local opt = parser.Opt(parser.Tag("no"))
   test.assertEqual(
-    alt({Token("noway", "nuh")}, 1), 
+    opt({Token("noway", "nuh")}, 1), 
     parser.Result(nil, 1)
+  )
+end)
+
+test.addTest("Rep correct parse", function()
+  local rep = parser.Rep(parser.Tag("simple"))
+  test.assertEqual(
+    rep({Token(1, "simple"), Token(2, "simple")}, 1), 
+    parser.Result({1, 2}, 3)
   )
 end)
 

@@ -118,16 +118,19 @@ function Opt:__call(tokens, pos)
 end
 
 -- Apply an input parser repeatedly until it fails.
-local function rep(parser, tokens, pos)
+local Rep = class(function (r, parser)
+  r.parser = parser
+end)
+function Rep:__call(tokens, pos)
   local results = {}
-  local result = parser(tokens, pos)
+  local result = self.parser(tokens, pos)
+  local updatedPos = pos
   while result do
-    results[#results + 1] = result
-    -- Update position
-    pos = result.pos
-    result = parser(tokens, pos)
+    results[#results + 1] = result.value
+    updatedPos = result.pos
+    result = self.parser(tokens, updatedPos)
   end
-  return Result(results, pos)
+  return Result(results, updatedPos)
 end
 
 return {
@@ -137,6 +140,6 @@ return {
   Concat = Concat,
   Alternate = Alternate,
   Opt = Opt,
-  rep = rep
+  Rep = Rep
 }
 
