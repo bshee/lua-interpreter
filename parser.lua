@@ -1,6 +1,8 @@
 require 'class'
 
+local M = {}
 -- Simple table equality
+-- TODO: Have this as a utility method?
 local function tableEq(t1, t2)
   if #t1 ~= #t2 then
     return false
@@ -26,11 +28,9 @@ local Result = class(function (r, value, pos)
   -- Index of the next token in the stream.
   r.pos = pos
 end)
-
 function Result:__tostring()
   return string.format("Result(%s, %d)", self.value, self.pos)
 end
-
 function Result:__eq(other)
   if type(self.value) ~= type(other.value) or self.pos ~= other.pos then
     return false
@@ -42,14 +42,14 @@ function Result:__eq(other)
     return self.value == other.value
   end
 end
+M.Result = Result
 
 -- Parse reserved words and operators as Result
-local Reserved = class(function (r, value, tag)
+M.Reserved = class(function (r, value, tag)
   r.value = value
   r.tag = tag
 end)
-
-function Reserved:__call(tokens, pos)
+function M.Reserved:__call(tokens, pos)
   local currentToken = tokens[pos]
   -- Check matching token
   if pos <= #tokens and 
@@ -60,11 +60,10 @@ function Reserved:__call(tokens, pos)
   end
 end
 
-local Tag = class(function (t, tag)
+M.Tag = class(function (t, tag)
   t.tag = tag
 end)
-
-function Tag:__call(tokens, pos)
+function M.Tag:__call(tokens, pos)
   local currentToken = tokens[pos]
   -- Check matching token
   if pos <= #tokens and currentToken.tag == self.tag then
@@ -74,12 +73,11 @@ function Tag:__call(tokens, pos)
   end
 end
 
-local Concat = class(function (c, left, right)
+M.Concat = class(function (c, left, right)
   c.left = left
   c.right = right
 end)
-
-function Concat:__call(tokens, pos)
+function M.Concat:__call(tokens, pos)
   local leftResult = self.left(tokens, pos)
   if leftResult then
     local rightResult = self.right(tokens, leftResult.pos)
@@ -90,12 +88,11 @@ function Concat:__call(tokens, pos)
   return nil
 end
 
-local Alternate = class(function (a, left, right)
+M.Alternate = class(function (a, left, right)
   a.left = left
   a.right = right
 end)
-
-function Alternate:__call(tokens, pos)
+function M.Alternate:__call(tokens, pos)
   local leftResult = self.left(tokens, pos)
   if leftResult then
     return leftResult
@@ -104,11 +101,10 @@ function Alternate:__call(tokens, pos)
   end
 end
 
-local Opt = class(function (o, parser)
+M.Opt = class(function (o, parser)
   o.parser = parser
 end)
-
-function Opt:__call(tokens, pos)
+function M.Opt:__call(tokens, pos)
   local result = self.parser(tokens, pos)
   if result then
     return result
@@ -118,10 +114,10 @@ function Opt:__call(tokens, pos)
 end
 
 -- Apply an input parser repeatedly until it fails.
-local Rep = class(function (r, parser)
+M.Rep = class(function (r, parser)
   r.parser = parser
 end)
-function Rep:__call(tokens, pos)
+function M.Rep:__call(tokens, pos)
   local results = {}
   local result = self.parser(tokens, pos)
   local updatedPos = pos
@@ -133,11 +129,11 @@ function Rep:__call(tokens, pos)
   return Result(results, updatedPos)
 end
 
-local Process = class(function (p, parser, map)
+M.Process = class(function (p, parser, map)
   p.parser = parser
   p.map = map
 end)
-function Process:__call(tokens, pos)
+function M.Process:__call(tokens, pos)
   local result = self.parser(tokens, pos)
   if result then
     -- Map the result value.
@@ -146,25 +142,14 @@ function Process:__call(tokens, pos)
   return result
 end
 
-local Lazy = class(function (l, parserFunction)
+M.Lazy = class(function (l, parserFunction)
   l.parserFunction = parserFunction
 end)
-function Lazy:__call(tokens, pos)
+function M.Lazy:__call(tokens, pos)
   if not self.parser then
     self.parser = self.parserFunction()
   end
   return self.parser(tokens, pos)
 end
 
-return {
-  Result = Result,
-  Reserved = Reserved,
-  Tag = Tag,
-  Concat = Concat,
-  Alternate = Alternate,
-  Opt = Opt,
-  Rep = Rep,
-  Process = Process,
-  Lazy = Lazy
-}
-
+return M
