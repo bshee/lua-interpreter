@@ -152,4 +152,17 @@ function M.Lazy:__call(tokens, pos)
   return self.parser(tokens, pos)
 end
 
+M.Phrase = class(function (p, parser)
+  p.parser = parser
+end)
+function M.Phrase:__call(tokens, pos)
+  local result = self.parser(tokens, pos)
+  -- Consume all available tokens
+  if result and result.pos == #tokens + 1 then
+    return result
+  else
+    return nil
+  end
+end
+
 return M

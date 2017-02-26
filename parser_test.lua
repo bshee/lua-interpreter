@@ -118,4 +118,22 @@ test.addTest("Lazy", function()
   test.assertEqual(check, 1)
 end)
 
+test.addTest("Phrase consume all", function()
+  local phrase = p.Phrase(p.Rep(p.Tag("simple")))
+  local tokens = {Token(1, "simple"), Token(2, "simple"), Token(3, "simple")}
+  test.assertEqual(
+    phrase(tokens, 1),
+    p.Result({1, 2, 3}, 4)
+  )
+end)
+
+test.addTest("Phrase fail", function()
+  local phrase = p.Phrase(p.Rep(p.Tag("simple")))
+  local tokens = {Token(1, "simple"), Token(2, "complex"), Token(3, "simple")}
+  test.assertEqual(
+    phrase(tokens, 1),
+    nil
+  )
+end)
+
 test.runTests()
