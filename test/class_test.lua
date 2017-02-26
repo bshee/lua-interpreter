@@ -1,5 +1,6 @@
-require 'class'
-local unittest = require 'unittest'
+require("init")
+require("class")
+local unittest = require("unittest")
 
 local A = class(function(a, value) a.value = value end)
 function A:__tostring() 

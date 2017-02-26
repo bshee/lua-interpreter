@@ -1,6 +1,4 @@
 -- Inserts a global function class
---
--- Trying to ease the process of making classes
 function class(base, init)
   -- Table to store the class info. The class is really a metatable for all objects.
   local classTable = {}
@@ -43,3 +41,5 @@ function class(base, init)
   setmetatable(classTable, mt)
   return classTable
 end
+
+return class

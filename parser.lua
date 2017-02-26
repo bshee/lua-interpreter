@@ -1,26 +1,7 @@
-require 'class'
+local class = require("class")
+local common = require("common")
 
 local M = {}
--- Simple table equality
--- TODO: Have this as a utility method?
-local function tableEq(t1, t2)
-  if #t1 ~= #t2 then
-    return false
-  else
-    -- Check all keys and values to see if they compare.
-    for key, value in pairs(t1) do
-      local t2Value = t2[key]
-      if type(t2Value) == "table" then
-        if not tableEq(value, t2Value) then
-          return false
-        end
-      elseif t2Value ~= value then
-        return false
-      end
-    end
-  end
-  return true
-end
 
 local Result = class(function (r, value, pos)
   -- Value of the AST
@@ -37,7 +18,7 @@ function Result:__eq(other)
   end
 
   if type(self.value) == "table" then
-    return tableEq(self.value, other.value)
+    return common.tableEq(self.value, other.value)
   else
     return self.value == other.value
   end

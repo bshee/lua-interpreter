@@ -1,3 +1,4 @@
+require("init")
 local lexer = require("lexer")
 local inspect = require("inspect")
 

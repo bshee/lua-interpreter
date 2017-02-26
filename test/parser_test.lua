@@ -1,6 +1,7 @@
-local test = require 'unittest'
-local parser = require 'parser'
-local Token = require 'token'
+require("init")
+local test = require("unittest")
+local parser = require("parser")
+local Token = require("token")
 
 -- Because laziness
 local p = parser
