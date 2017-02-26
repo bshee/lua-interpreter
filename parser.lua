@@ -133,6 +133,19 @@ function Rep:__call(tokens, pos)
   return Result(results, updatedPos)
 end
 
+local Process = class(function (p, parser, map)
+  p.parser = parser
+  p.map = map
+end)
+function Process:__call(tokens, pos)
+  local result = self.parser(tokens, pos)
+  if result then
+    -- Map the result value.
+    result.value = self.map(result.value)
+  end
+  return result
+end
+
 return {
   Result = Result,
   Reserved = Reserved,
@@ -140,6 +153,7 @@ return {
   Concat = Concat,
   Alternate = Alternate,
   Opt = Opt,
-  Rep = Rep
+  Rep = Rep,
+  Process = Process
 }
 

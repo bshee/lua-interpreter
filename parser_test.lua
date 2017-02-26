@@ -1,7 +1,9 @@
 local test = require 'unittest'
 local parser = require 'parser'
-
 local Token = require 'token'
+
+-- Because laziness
+local p = parser
 
 test.addTest(function()
   -- Test result toString
@@ -89,6 +91,16 @@ test.addTest("Rep correct parse", function()
   test.assertEqual(
     rep({Token(1, "simple"), Token(2, "simple")}, 1), 
     parser.Result({1, 2}, 3)
+  )
+end)
+
+test.addTest("Process apply", function()
+  local process = p.Process(p.Tag("simple"), function(value)
+    return value * 2 + 1
+  end)
+  test.assertEqual(
+    process({Token(10, "simple")}, 1),
+    p.Result(21, 2)
   )
 end)
 
