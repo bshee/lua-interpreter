@@ -104,4 +104,18 @@ test.addTest("Process apply", function()
   )
 end)
 
+test.addTest("Lazy", function()
+  local check = 0
+  local lazy = p.Lazy(function()
+    check = check + 1
+    return p.Tag("simple")
+  end)
+  test.assertEqual(
+    lazy({Token(1, "simple")}, 1),
+    p.Result(1, 2)
+  )
+  lazy({Token(1, "simple")}, 1)
+  test.assertEqual(check, 1)
+end)
+
 test.runTests()

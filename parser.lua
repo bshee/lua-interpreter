@@ -146,6 +146,16 @@ function Process:__call(tokens, pos)
   return result
 end
 
+local Lazy = class(function (l, parserFunction)
+  l.parserFunction = parserFunction
+end)
+function Lazy:__call(tokens, pos)
+  if not self.parser then
+    self.parser = self.parserFunction()
+  end
+  return self.parser(tokens, pos)
+end
+
 return {
   Result = Result,
   Reserved = Reserved,
@@ -154,6 +164,7 @@ return {
   Alternate = Alternate,
   Opt = Opt,
   Rep = Rep,
-  Process = Process
+  Process = Process,
+  Lazy = Lazy
 }
 
