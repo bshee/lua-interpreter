@@ -146,4 +146,11 @@ function M.Phrase:__call(tokens, pos)
   end
 end
 
+M.Exp = class(function (e, parser, separator)
+  e.parser = parser
+  e.separator = separator
+end)
+function M.Exp:__call(tokens, pos)
+end
+
 return M
