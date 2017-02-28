@@ -148,9 +148,28 @@ end
 
 M.Exp = class(function (e, parser, separator)
   e.parser = parser
+  -- Separator returns a function combining elements parsed on left and right in single value
   e.separator = separator
 end)
 function M.Exp:__call(tokens, pos)
+  local result = self.parser(tokens, pos)
+  -- Create a closure over result so this function can be used in Process
+  local function processNext(parsed)
+    -- parsed is an array of two elements from Concat
+    sepfunc = parsed[1]
+    right = parsed[2]
+    return sepfunc(result.value, right)
+  end
+
+  nextParser = M.Process(M.Concat(self.separator, self.parser), processNext)
+  nextResult = result
+  while nextResult ~= nil do
+    nextResult = nextParser(tokens, result.pos)
+    if nextResult then
+      result = nextResult
+    end
+  end
+  return result
 end
 
 return M

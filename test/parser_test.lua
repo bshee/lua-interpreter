@@ -2,6 +2,7 @@ require("init")
 local test = require("unittest")
 local parser = require("parser")
 local Token = require("token")
+local inspect = require("inspect")
 
 -- Because laziness
 local p = parser
@@ -58,7 +59,7 @@ end)
 test.addTest("Alternate left only", function()
   local alt = parser.Alternate(parser.Tag("simple"), parser.Tag("no"))
   test.assertEqual(
-    alt({Token("value", "simple")}, 1), 
+    alt({Token("value", "simple")}, 1),
     parser.Result("value", 2)
   )
 end)
@@ -66,7 +67,7 @@ end)
 test.addTest("Alternate right only", function()
   local alt = parser.Alternate(parser.Tag("no"), parser.Tag("simple"))
   test.assertEqual(
-    alt({Token("value2", "simple")}, 1), 
+    alt({Token("value2", "simple")}, 1),
     parser.Result("value2", 2)
   )
 end)
@@ -74,7 +75,7 @@ end)
 test.addTest("Opt correct parse", function()
   local opt = parser.Opt(parser.Tag("simple"))
   test.assertEqual(
-    opt({Token("optical", "simple")}, 1), 
+    opt({Token("optical", "simple")}, 1),
     parser.Result("optical", 2)
   )
 end)
@@ -82,7 +83,7 @@ end)
 test.addTest("Opt no parse", function()
   local opt = parser.Opt(parser.Tag("no"))
   test.assertEqual(
-    opt({Token("noway", "nuh")}, 1), 
+    opt({Token("noway", "nuh")}, 1),
     parser.Result(nil, 1)
   )
 end)
@@ -90,7 +91,7 @@ end)
 test.addTest("Rep correct parse", function()
   local rep = parser.Rep(parser.Tag("simple"))
   test.assertEqual(
-    rep({Token(1, "simple"), Token(2, "simple")}, 1), 
+    rep({Token(1, "simple"), Token(2, "simple")}, 1),
     parser.Result({1, 2}, 3)
   )
 end)
@@ -134,6 +135,34 @@ test.addTest("Phrase fail", function()
   test.assertEqual(
     phrase(tokens, 1),
     nil
+  )
+end)
+
+test.addTest("Exp assign", function()
+  local assign = p.Reserved("x := 1", "assign")
+  local function processSep(parsed)
+    return function(left, right)
+      return {left, right}
+    end
+  end
+  local function compoundSep()
+    return p.Process(p.Reserved(";", "reserved"), processSep)
+  end
+  local exp = p.Exp(assign, compoundSep())
+  local tokens = {
+    Token("x := 1", "assign"),
+    Token(";", "reserved"),
+    Token("x := 1", "assign"),
+    Token(";", "reserved"),
+    Token("x := 1", "assign")
+  }
+  local result = exp(tokens, 1)
+  test.assertEqual(
+    result,
+    p.Result(
+      {{"x := 1", "x := 1"}, "x := 1"},
+      6
+    )
   )
 end)
 
