@@ -12,9 +12,14 @@ t.addTest("Equality compare", function()
   t.assertEqual(e1, e2)
 end)
 
-t.addTest("IntAexp string", function()
+t.addTest("IntAexp tostring", function()
   local ia = e.IntAexp(13)
   t.assertEqual(tostring(ia), "IntAexp(13)")
+end)
+
+t.addTest("VarAexp tostring", function()
+  local va = e.VarAexp("x")
+  t.assertEqual(tostring(va), "VarAexp(x)")
 end)
 
 t.runTests()

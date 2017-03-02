@@ -17,11 +17,11 @@ function M.IntAexp:__tostring()
   return string.format("IntAexp(%d)", self.value)
 end
 
--- TODO: Make this a class
-M.VarAexp = {}
-function M.VarAexp:new(name)
-  local object = {name = name}
-  return object
+M.VarAexp = class(Equality, function(v, name)
+  v.name = name
+end)
+function M.VarAexp:__tostring()
+  return string.format("VarAexp(%s)", self.name)
 end
 
 return M
