@@ -22,4 +22,14 @@ t.addTest("VarAexp tostring", function()
   t.assertEqual(tostring(va), "VarAexp(x)")
 end)
 
+t.addTest("BinopAexp tostring", function()
+  local b = e.BinopAexp("+", "1", "2")
+  t.assertEqual(tostring(b), "BinopAexp(+, 1, 2)")
+end)
+
+t.addTest("RelopBexp tostring", function()
+  local b = e.RelopBexp("<", "1", "2")
+  t.assertEqual(tostring(b), "RelopBexp(<, 1, 2)")
+end)
+
 t.runTests()

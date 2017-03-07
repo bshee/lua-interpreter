@@ -24,4 +24,22 @@ function M.VarAexp:__tostring()
   return string.format("VarAexp(%s)", self.name)
 end
 
+M.BinopAexp = class(Equality, function(b, op, left, right)
+  b.op = op
+  b.left = left
+  b.right = right
+end)
+function M.BinopAexp:__tostring()
+  return string.format("BinopAexp(%s, %s, %s)", self.op, self.left, self.right)
+end
+
+M.RelopBexp = class(Equality, function(r, op, left, right)
+  r.op = op
+  r.left = left
+  r.right = right
+end)
+function M.RelopBexp:__tostring()
+  return string.format("RelopBexp(%s, %s, %s)", self.op, self.left, self.right)
+end
+
 return M
