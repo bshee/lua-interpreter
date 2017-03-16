@@ -32,4 +32,19 @@ t.addTest("RelopBexp tostring", function()
   t.assertEqual(tostring(b), "RelopBexp(<, 1, 2)")
 end)
 
+t.addTest("AndBexp tostring", function()
+  local b = e.AndBexp(true, false)
+  t.assertEqual(tostring(b), "AndBexp(true, false)")
+end)
+
+t.addTest("OrBexp tostring", function()
+  local b = e.OrBexp(true, false)
+  t.assertEqual(tostring(b), "OrBexp(true, false)")
+end)
+
+t.addTest("NotBexp tostring", function()
+  local b = e.NotBexp(true)
+  t.assertEqual(tostring(b), "NotBexp(true)")
+end)
+
 t.runTests()

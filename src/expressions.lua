@@ -42,22 +42,20 @@ function M.RelopBexp:__tostring()
   return string.format("RelopBexp(%s, %s, %s)", self.op, self.left, self.right)
 end
 
-M.AndBexp = class(Equality, function(r, op, left, right)
-  r.op = op
+M.AndBexp = class(Equality, function(r, left, right)
   r.left = left
   r.right = right
 end)
 function M.AndBexp:__tostring()
-  return string.format("AndBexp(%s, %s, %s)", self.op, self.left, self.right)
+  return string.format("AndBexp(%s, %s)", self.left, self.right)
 end
 
-M.OrBexp = class(Equality, function(r, op, left, right)
-  r.op = op
+M.OrBexp = class(Equality, function(r, left, right)
   r.left = left
   r.right = right
 end)
 function M.OrBexp:__tostring()
-  return string.format("OrBexp(%s, %s, %s)", self.op, self.left, self.right)
+  return string.format("OrBexp(%s, %s)", self.left, self.right)
 end
 
 M.NotBexp = class(Equality, function(bexp, exp)
