@@ -47,4 +47,23 @@ t.addTest("NotBexp tostring", function()
   t.assertEqual(tostring(b), "NotBexp(true)")
 end)
 
+t.addTest("AssignStatement tostring", function()
+  local s = e.AssignStatement("x", 1)
+  t.assertEqual(tostring(s), "AssignStatement(x, 1)")
+end)
+
+t.addTest("CompoundStatement tostring", function()
+  local s = e.CompoundStatement("x = 1", "y = 2")
+  t.assertEqual(tostring(s), "CompoundStatement(x = 1, y = 2)")
+end)
+
+t.addTest("IfStatement tostring", function()
+  local s = e.IfStatement("x > 0", "y = -1", "y = 1")
+  t.assertEqual(tostring(s), "IfStatement(x > 0, y = -1, y = 1)")
+end)
+
+t.addTest("WhileStatement tostring", function()
+  local s = e.WhileStatement("x == 0", "x += 1")
+  t.assertEqual(tostring(s), "WhileStatement(x == 0, x += 1)")
+end)
 t.runTests()
