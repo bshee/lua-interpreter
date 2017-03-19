@@ -102,4 +102,5 @@ end)
 function M.WhileStatement:__tostring()
   return string.format("WhileStatement(%s, %s)", self.condition, self.body)
 end
+
 return M
