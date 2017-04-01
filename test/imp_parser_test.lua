@@ -86,4 +86,13 @@ t.addTest("processWhileStmt", function()
   t.assertEqual(impPa.processWhileStmt(parsed), ex.WhileStatement(true, "x := x + 1"))
 end)
 
+t.addTest("aexpValue", function()
+  local tokens = il.lex("123")
+  local result = impPa.aexpValue()(tokens, 1)
+  t.assertEqual(
+    result,
+    pa.Result(ex.IntAexp(123), 2)
+  )
+end)
+
 t.runTests()

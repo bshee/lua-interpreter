@@ -10,13 +10,13 @@ end
 
 M.id = pa.Tag(il.ID)
 
-M.num = pa.Process(pa.Tag, tonumber)
+M.num = pa.Process(pa.Tag(il.INT), tonumber)
   --function(i) return tonumber(i) end)
 
 M.aexpValue = function()
   return pa.Alternate(
-    pa.Process(M.num, function(i) return ex.IntAexp(i) end),
-    pa.Process(M.id, function(v) return ex.VarAexp(v) end)
+    pa.Process(M.num, ex.IntAexp),
+    pa.Process(M.id, ex.VarAexp)
   )
 end
 
@@ -29,7 +29,7 @@ end
 M.aexpGroup = function()
   return pa.Process(
     pa.Concat(
-      pa.Concat(M.keyword("("), pa.Lazy(aexp)),
+      pa.Concat(M.keyword("("), pa.Lazy(M.aexp)),
       M.keyword(")")
     ),
     M.processGroup
@@ -37,7 +37,7 @@ M.aexpGroup = function()
 end
 
 M.aexpTerm = function()
-  return pa.Alternate(aexpValue(), aexpGroup())
+  return pa.Alternate(M.aexpValue(), M.aexpGroup())
 end
 
 -- A factory function to create BinopAexp instances for use with Exp.
@@ -250,7 +250,7 @@ end
 M.stmt = function()
   return pa.Alternate(
     pa.Alternate(M.assignStmt(), M.ifStmt()),
-    pa.whileStmt()
+    M.whileStmt()
   )
 end
 
@@ -258,7 +258,7 @@ M.parser = function()
   return pa.Phrase(M.stmtList())
 end
 
-M.impParse = function(tokens)
+M.parse = function(tokens)
   local ast = M.parser()(tokens, 1)
   return ast
 end
