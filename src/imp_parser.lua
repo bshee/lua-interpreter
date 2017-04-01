@@ -155,4 +155,22 @@ M.bexp = function()
   return M.precedence(M.bexpTerm(), M.bexpPrecedenceLevels, M.processLogic)
 end
 
+M.processAssignStmt = function(parsed)
+  local inner = parsed[1]
+  local name = inner[1]
+  local exp = parsed[2]
+  -- Ignore the assign operator.
+  return ex.AssignStatement(name, exp)
+end
+
+M.assignStmt = function()
+  return pa.Process(
+    pa.Concat(
+      pa.Concat(M.id, M.keyword(":=")),
+      M.aexp()
+    ),
+    M.processAssignStmt
+  )
+end
+
 return M

@@ -33,4 +33,9 @@ t.addTest("processLogic", function()
   )
 end)
 
+t.addTest("processAssignStmt", function()
+  local parsed = {{"x", ":="}, "apple"}
+  t.assertEqual(impPa.processAssignStmt(parsed), ex.AssignStatement("x", "apple"))
+end)
+
 t.runTests()
