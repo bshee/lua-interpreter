@@ -11,8 +11,8 @@ local tokenExpressions = {
   {"#[^\n]*"},
   -- Wonderful reserved list
   {":=", module.RESERVED},
-  {"%{", module.RESERVED},
-  {"%}", module.RESERVED},
+  {"%(", module.RESERVED},
+  {"%)", module.RESERVED},
   {";", module.RESERVED},
   {"%+", module.RESERVED},
   {"%-", module.RESERVED},
