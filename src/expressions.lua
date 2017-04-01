@@ -3,28 +3,30 @@ local common = require("common")
 
 local M = {}
 
--- Lazy way to compare classes. Would be more efficient to implement a __eq for each class.
-M.Equality = class()
-function M.Equality:__eq(other)
+-- Lazy way to compare classes that is used generically.
+-- Would be more efficient to implement a __eq for each class.
+local function lazyEq(self, other)
   return common.tableEq(self, other)
 end
 
 -- Arithmetic expressions
-M.IntAexp = class(Equality, function (a, value)
+M.IntAexp = class(function (a, value)
   a.value = value
 end)
 function M.IntAexp:__tostring()
   return string.format("IntAexp(%d)", self.value)
 end
+M.IntAexp.__eq = lazyEq
 
-M.VarAexp = class(Equality, function(v, name)
+M.VarAexp = class(function(v, name)
   v.name = name
 end)
 function M.VarAexp:__tostring()
   return string.format("VarAexp(%s)", self.name)
 end
+M.VarAexp.__eq = lazyEq
 
-M.BinopAexp = class(Equality, function(b, op, left, right)
+M.BinopAexp = class(function(b, op, left, right)
   b.op = op
   b.left = left
   b.right = right
@@ -32,8 +34,9 @@ end)
 function M.BinopAexp:__tostring()
   return string.format("BinopAexp(%s, %s, %s)", self.op, self.left, self.right)
 end
+M.BinopAexp.__eq = lazyEq
 
-M.RelopBexp = class(Equality, function(r, op, left, right)
+M.RelopBexp = class(function(r, op, left, right)
   r.op = op
   r.left = left
   r.right = right
@@ -41,47 +44,53 @@ end)
 function M.RelopBexp:__tostring()
   return string.format("RelopBexp(%s, %s, %s)", self.op, self.left, self.right)
 end
+M.RelopBexp.__eq = lazyEq
 
-M.AndBexp = class(Equality, function(r, left, right)
+M.AndBexp = class(function(r, left, right)
   r.left = left
   r.right = right
 end)
 function M.AndBexp:__tostring()
   return string.format("AndBexp(%s, %s)", self.left, self.right)
 end
+M.AndBexp.__eq = lazyEq
 
-M.OrBexp = class(Equality, function(r, left, right)
+M.OrBexp = class(function(r, left, right)
   r.left = left
   r.right = right
 end)
 function M.OrBexp:__tostring()
   return string.format("OrBexp(%s, %s)", self.left, self.right)
 end
+M.OrBexp.__eq = lazyEq
 
-M.NotBexp = class(Equality, function(bexp, exp)
+M.NotBexp = class(function(bexp, exp)
   bexp.exp = exp
 end)
 function M.NotBexp:__tostring()
   return string.format("NotBexp(%s)", self.exp)
 end
+M.NotBexp.__eq = lazyEq
 
-M.AssignStatement = class(Equality, function(stmt, name, aexp)
+M.AssignStatement = class(function(stmt, name, aexp)
   stmt.name = name
   stmt.aexp = aexp
 end)
 function M.AssignStatement:__tostring()
   return string.format("AssignStatement(%s, %s)", self.name, self.aexp)
 end
+M.AssignStatement.__eq = lazyEq
 
-M.CompoundStatement = class(Equality, function(stmt, first, second)
+M.CompoundStatement = class(function(stmt, first, second)
   stmt.first = first
   stmt.second = second
 end)
 function M.CompoundStatement:__tostring()
   return string.format("CompoundStatement(%s, %s)", self.first, self.second)
 end
+M.CompoundStatement.__eq = lazyEq
 
-M.IfStatement = class(Equality, function(stmt, condition, trueStmt, falseStmt)
+M.IfStatement = class(function(stmt, condition, trueStmt, falseStmt)
   stmt.condition = condition
   stmt.trueStmt = trueStmt
   stmt.falseStmt = falseStmt
@@ -94,13 +103,15 @@ function M.IfStatement:__tostring()
     self.falseStmt
   )
 end
+M.IfStatement.__eq = lazyEq
 
-M.WhileStatement = class(Equality, function(stmt, condition, body)
+M.WhileStatement = class(function(stmt, condition, body)
   stmt.condition = condition
   stmt.body = body
 end)
 function M.WhileStatement:__tostring()
   return string.format("WhileStatement(%s, %s)", self.condition, self.body)
 end
+M.WhileStatement.__eq = lazyEq
 
 return M
