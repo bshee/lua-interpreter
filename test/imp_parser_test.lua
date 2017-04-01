@@ -131,4 +131,22 @@ t.addTest("aexpTerm aexpGroup", function()
   )
 end)
 
+t.addTest("aexp", function()
+  local tokens = il.lex("1 + var * 3")
+  local result = impPa.aexp()(tokens, 1)
+  t.assertEqual(
+    result,
+    pa.Result(
+      ex.BinopAexp(
+        "+",
+        ex.IntAexp(1),
+        ex.BinopAexp(
+          "*",
+          ex.VarAexp("var"),
+          ex.IntAexp(3)
+        )
+      ), 6)
+  )
+end)
+
 t.runTests()

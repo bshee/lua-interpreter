@@ -72,7 +72,7 @@ M.precedence = function(valueParser, precedenceLevels, combine)
   end
   local parser = valueParser
   for i, precedenceLevel in ipairs(precedenceLevels) do
-    parser = pa.Exp(valueParser, opParser(precedenceLevel))
+    parser = pa.Exp(parser, opParser(precedenceLevel))
   end
   return parser
 end
