@@ -48,7 +48,7 @@ end
 -- Determine if any operators are in the list.
 M.anyOperatorInList = function(ops)
   local length = #ops
-  if length <= 1 then
+  if length < 1 then
     return nil
   end
   -- Reduce the parser into alternates.
@@ -70,12 +70,9 @@ M.precedence = function(valueParser, precedenceLevels, combine)
   local opParser = function(precedenceLevel)
     return pa.Process(M.anyOperatorInList(precedenceLevel), combine)
   end
-  -- Screw safety checks! TODO: Add them.
-  local parser = pa.Exp(valueParser, precedenceLevels[1])
-  for index, precedenceLevel in ipairs(precedenceLevels) do
-    if index > 1 then
-      parser = pa.Exp(parser, opParser(precedenceLevel))
-    end
+  local parser = valueParser
+  for i, precedenceLevel in ipairs(precedenceLevels) do
+    parser = pa.Exp(valueParser, opParser(precedenceLevel))
   end
   return parser
 end

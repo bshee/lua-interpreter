@@ -104,4 +104,22 @@ t.addTest("aexpValue variable", function()
   )
 end)
 
+t.addTest("aexpTerm aexpValue", function()
+  local tokens = il.lex("wonderfulVariable")
+  local result = impPa.aexpValue()(tokens, 1)
+  t.assertEqual(
+    result,
+    pa.Result(ex.VarAexp("wonderfulVariable"), 2)
+  )
+end)
+
+t.addTest("aexpGroup", function()
+  local tokens = il.lex("(22)")
+  local result = impPa.aexpGroup()(tokens, 1)
+  t.assertEqual(
+    result,
+    pa.Result(ex.IntAexp(22), 4)
+  )
+end)
+
 t.runTests()
