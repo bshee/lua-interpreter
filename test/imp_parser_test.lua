@@ -8,7 +8,7 @@ local Token = require("token")
 
 t.addTest("keyword", function()
   local k = impPa.keyword("if")
-  local tokens = {Token("if", il.RESERVED)} 
+  local tokens = {Token("if", il.RESERVED)}
   t.assertEqual(k(tokens, 1), pa.Result("if", 2))
 end)
 
@@ -36,6 +36,37 @@ end)
 t.addTest("processAssignStmt", function()
   local parsed = {{"x", ":="}, "apple"}
   t.assertEqual(impPa.processAssignStmt(parsed), ex.AssignStatement("x", "apple"))
+end)
+
+t.addTest("processIfStmt", function()
+  local parsed1 = {
+    {
+      {
+        {
+          {"if", "true"},
+          "then"
+        },
+        "x := 2"
+      },
+      {"else", "x := 3"}
+    },
+    "end"
+  }
+  t.assertEqual(impPa.processIfStmt(parsed1), ex.IfStatement("true", "x := 2", "x := 3"))
+  local parsed2 = {
+    {
+      {
+        {
+          {"if", "true"},
+          "then"
+        },
+        "y := 1"
+      },
+      nil
+    },
+    "end"
+  }
+  t.assertEqual(impPa.processIfStmt(parsed2), ex.IfStatement("true", "y := 1", nil))
 end)
 
 t.runTests()

@@ -188,6 +188,19 @@ M.stmtList = function()
 end
 
 M.processIfStmt = function(parsed)
+  local level1 = parsed[1]
+  local falseParsed = level1[2]
+  local level2 = level1[1]
+  local trueStmt = level2[2]
+  local level3 = level2[1]
+  local level4 = level3[1]
+  local condition = level4[2]
+  local falseStmt = nil
+  if falseParsed then
+    -- There was a false body.
+    falseStmt = falseParsed[2]
+  end
+  return ex.IfStatement(condition, trueStmt, falseStmt)
 end
 
 M.ifStmt = function()
