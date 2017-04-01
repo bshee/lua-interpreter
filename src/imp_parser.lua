@@ -254,4 +254,13 @@ M.stmt = function()
   )
 end
 
+M.parser = function()
+  return pa.Phrase(M.stmtList())
+end
+
+M.impParse = function(tokens)
+  local ast = M.parser()(tokens, 1)
+  return ast
+end
+
 return M
