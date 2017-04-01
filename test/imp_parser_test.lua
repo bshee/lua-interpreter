@@ -22,4 +22,15 @@ t.addTest("processRelop", function()
   t.assertEqual(impPa.processRelop(parsed), ex.RelopBexp(">=", "21", "14"))
 end)
 
+t.addTest("processLogic", function()
+  t.assertEqual(
+    impPa.processLogic("and")(true, true),
+    ex.AndBexp(true, true)
+  )
+  t.assertEqual(
+    impPa.processLogic("or")(false, true),
+    ex.OrBexp(false, true)
+  )
+end)
+
 t.runTests()

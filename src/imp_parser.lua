@@ -20,8 +20,8 @@ M.aexpValue = function()
   )
 end
 
+  -- Destructure parsed from the Concat result of parentheses.
 M.processGroup = function(parsed)
-  -- Destructure parsed from the Concat result.
   local inner = parsed[1]
   return inner[2]
 end
@@ -101,6 +101,7 @@ M.relops = {
   "=",
   "!="
 }
+
 M.bexpRelop = function()
   return pa.Process(
     pa.Concat(
@@ -109,6 +110,49 @@ M.bexpRelop = function()
     ),
     M.processRelop
   )
+end
+
+M.bexpNot = function()
+  return pa.Process(
+    pa.Concat(
+      M.keyword("not"),
+      pa.Lazy(M.bexpTerm)
+    ),
+    function(parsed) return ex.NotBexp(parsed[2]) end
+  )
+end
+
+M.bexpGroup = function()
+  return pa.Process(
+    pa.Concat(
+      pa.Concat(M.keyword("("), pa.Lazy(M.bexp)),
+      M.keyword(")")
+    ),
+    M.processGroup
+  )
+end
+
+M.bexpTerm = function()
+  return pa.Alternate(pa.Alternate(M.bexpNot(), M.bexpRelop()), M.bexpGroup())
+end
+
+M.bexpPrecedenceLevels = {
+  {"and"},
+  {"or"}
+}
+
+M.processLogic = function(op)
+  if op == 'and' then
+    return ex.AndBexp
+  elseif op == 'or' then
+    return ex.OrBexp
+  else
+    error("Unknown logic operator: " + op)
+  end
+end
+
+M.bexp = function()
+  return M.precedence(M.bexpTerm(), M.bexpPrecedenceLevels, M.processLogic)
 end
 
 return M
