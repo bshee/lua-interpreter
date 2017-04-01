@@ -207,6 +207,12 @@ M.ifStmt = function()
 end
 
 M.processWhileStmt = function(parsed)
+  local level1 = parsed[1]
+  local body = level1[2]
+  local level2 = level1[1]
+  local level3 = level2[1]
+  local condition = level3[2]
+  return ex.WhileStatement(condition, body)
 end
 
 M.whileStmt = function()

@@ -43,7 +43,7 @@ t.addTest("processIfStmt", function()
     {
       {
         {
-          {"if", "true"},
+          {"if", false},
           "then"
         },
         "x := 2"
@@ -52,7 +52,7 @@ t.addTest("processIfStmt", function()
     },
     "end"
   }
-  t.assertEqual(impPa.processIfStmt(parsed1), ex.IfStatement("true", "x := 2", "x := 3"))
+  t.assertEqual(impPa.processIfStmt(parsed1), ex.IfStatement(false, "x := 2", "x := 3"))
   local parsed2 = {
     {
       {
@@ -67,6 +67,23 @@ t.addTest("processIfStmt", function()
     "end"
   }
   t.assertEqual(impPa.processIfStmt(parsed2), ex.IfStatement("true", "y := 1", nil))
+end)
+
+t.addTest("processWhileStmt", function()
+  local parsed = {
+    {
+      {
+        {
+          "while",
+          true
+        },
+        "do"
+      },
+      "x := x + 1"
+    },
+    "end"
+  }
+  t.assertEqual(impPa.processWhileStmt(parsed), ex.WhileStatement(true, "x := x + 1"))
 end)
 
 t.runTests()
