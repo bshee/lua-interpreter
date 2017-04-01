@@ -204,6 +204,22 @@ M.processIfStmt = function(parsed)
 end
 
 M.ifStmt = function()
+  return pa.Process(
+    pa.Concat(
+      pa.Concat(
+        pa.Concat(
+          pa.Concat(
+              pa.Concat(M.keyword("if"), M.bexp()),
+              M.keyword("then")
+            ),
+            pa.Lazy(M.stmtList)
+        ),
+        pa.Opt(pa.Concat(M.keyword("else"), pa.Lazy(M.stmtList)))
+      ),
+      M.keyword("end")
+    ),
+    M.processIfStmt
+  )
 end
 
 M.processWhileStmt = function(parsed)
@@ -216,6 +232,19 @@ M.processWhileStmt = function(parsed)
 end
 
 M.whileStmt = function()
+  return pa.Process(
+    pa.Concat(
+      pa.Concat(
+        pa.Concat(
+          pa.Concat(M.keyword("while"), M.bexp()),
+          M.keyword("do")
+        ),
+        pa.Lazy(M.stmtList)
+      ),
+      M.keyword("end")
+    ),
+    M.processWhileStmt
+  )
 end
 
 M.stmt = function()
