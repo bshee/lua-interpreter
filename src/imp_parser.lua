@@ -20,7 +20,6 @@ M.aexpValue = function()
   )
 end
 
--- TODO: This could be local?
 M.processGroup = function(parsed)
   -- Destructure parsed from the Concat result.
   local inner = parsed[1]
@@ -79,6 +78,37 @@ M.precedence = function(valueParser, precedenceLevels, combine)
     end
   end
   return parser
+end
+
+M.aexp = function()
+  return M.precedence(M.aexpTerm(), M.aexpPrecedenceLevels, M.processBinop)
+end
+
+-- Helper function to deconstruct Concat result.
+M.processRelop = function(parsed)
+  local inner = parsed[1]
+  local left = inner[1]
+  local op = inner[2]
+  local right = parsed[2]
+  return ex.RelopBexp(op, left, right)
+end
+
+M.relops = {
+  "<",
+  "<=",
+  ">",
+  ">=",
+  "=",
+  "!="
+}
+M.bexpRelop = function()
+  return pa.Process(
+    pa.Concat(
+      pa.Concat(M.aexp(), M.anyOperatorInList(M.relops)),
+      M.aexp()
+    ),
+    M.processRelop
+  )
 end
 
 return M
