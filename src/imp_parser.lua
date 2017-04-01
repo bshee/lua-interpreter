@@ -10,7 +10,7 @@ end
 
 M.id = pa.Tag(il.ID)
 
-M.num = pa.Process(pa.Tag, tonumber) 
+M.num = pa.Process(pa.Tag, tonumber)
   --function(i) return tonumber(i) end)
 
 M.aexpValue = function()
@@ -27,7 +27,7 @@ M.processGroup = function(parsed)
 end
 
 M.aexpGroup = function()
-  return pa.Process( 
+  return pa.Process(
     pa.Concat(
       pa.Concat(M.keyword("("), pa.Lazy(aexp)),
       M.keyword(")")
@@ -170,6 +170,39 @@ M.assignStmt = function()
       M.aexp()
     ),
     M.processAssignStmt
+  )
+end
+
+M.stmtListSeparator = pa.Process(
+  M.keyword(";"),
+  -- Parameter passed here doesn't matter.
+  function()
+    return function(left, right)
+      return ex.CompoundStatement(left, right)
+    end
+  end
+)
+
+M.stmtList = function()
+  return pa.Exp(M.stmt(), M.stmtListSeprator)
+end
+
+M.processIfStmt = function(parsed)
+end
+
+M.ifStmt = function()
+end
+
+M.processWhileStmt = function(parsed)
+end
+
+M.whileStmt = function()
+end
+
+M.stmt = function()
+  return pa.Alternate(
+    pa.Alternate(M.assignStmt(), M.ifStmt()),
+    pa.whileStmt()
   )
 end
 
