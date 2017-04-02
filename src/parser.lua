@@ -153,7 +153,7 @@ M.Exp = class(function (e, parser, separator)
 end)
 function M.Exp:__call(tokens, pos)
   local result = self.parser(tokens, pos)
-  -- Create a closure over result so this function can be used in Process
+  -- Create a closure over result so this function can be used in Process.
   local function processNext(parsed)
     -- parsed is an array of two elements from Concat
     sepfunc = parsed[1]
@@ -161,11 +161,11 @@ function M.Exp:__call(tokens, pos)
     return sepfunc(result.value, right)
   end
 
-  nextParser = M.Process(M.Concat(self.separator, self.parser), processNext)
-  nextResult = result
+  local nextParser = M.Process(M.Concat(self.separator, self.parser), processNext)
+  local nextResult = result
   while nextResult ~= nil do
     nextResult = nextParser(tokens, result.pos)
-    if nextResult then
+    if nextResult ~= nil then
       result = nextResult
     end
   end
