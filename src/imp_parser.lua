@@ -256,8 +256,7 @@ M.parser = function()
 end
 
 M.parse = function(tokens)
-  local ast = M.parser()(tokens, 1)
-  return ast
+  return M.parser()(tokens, 1)
 end
 
 return M

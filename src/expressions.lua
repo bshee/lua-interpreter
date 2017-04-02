@@ -28,8 +28,8 @@ function M.VarAexp:__tostring()
   return string.format("VarAexp(%s)", self.name)
 end
 function M.VarAexp:eval(env)
-  if env[self.value] ~= nil then
-    return env[self.value]
+  if env[self.name] ~= nil then
+    return env[self.name]
   else
     return 0
   end
@@ -53,8 +53,8 @@ local opToFunction = {
 }
 function M.BinopAexp:eval(env)
   if opToFunction[self.op] ~= nil then
-    local leftValue = self.left.eval(env)
-    local rightValue = self.right.eval(env)
+    local leftValue = self.left:eval(env)
+    local rightValue = self.right:eval(env)
     return opToFunction[self.op](leftValue, rightValue)
   else
     error("Unknown operator: " .. self.op)
@@ -82,8 +82,8 @@ local opToFunction = {
 }
 function M.RelopBexp:eval(env)
   if opToFunction[self.op] ~= nil then
-    local leftValue = self.left.eval(env)
-    local rightValue = self.right.eval(env)
+    local leftValue = self.left:eval(env)
+    local rightValue = self.right:eval(env)
     return opToFunction[self.op](leftValue, rightValue)
   else
     error("Unknown operator: " .. self.op)
@@ -100,8 +100,8 @@ function M.AndBexp:__tostring()
   return string.format("AndBexp(%s, %s)", self.left, self.right)
 end
 function M.AndBexp:eval(env)
-  local leftValue = self.left.eval(env)
-  local rightValue = self.right.eval(env)
+  local leftValue = self.left:eval(env)
+  local rightValue = self.right:eval(env)
   return leftValue and rightValue
 end
 M.AndBexp.__eq = lazyEq
@@ -114,8 +114,8 @@ function M.OrBexp:__tostring()
   return string.format("OrBexp(%s, %s)", self.left, self.right)
 end
 function M.OrBexp:eval(env)
-  local leftValue = self.left.eval(env)
-  local rightValue = self.right.eval(env)
+  local leftValue = self.left:eval(env)
+  local rightValue = self.right:eval(env)
   return leftValue or rightValue
 end
 M.OrBexp.__eq = lazyEq
@@ -127,7 +127,7 @@ function M.NotBexp:__tostring()
   return string.format("NotBexp(%s)", self.exp)
 end
 function M.NotBexp:eval(env)
-  local value = self.exp.eval(env)
+  local value = self.exp:eval(env)
   return not value
 end
 M.NotBexp.__eq = lazyEq
@@ -140,7 +140,7 @@ function M.AssignStatement:__tostring()
   return string.format("AssignStatement(%s, %s)", self.name, self.aexp)
 end
 function M.AssignStatement:eval(env)
-  local value = self.aexp.eval(env)
+  local value = self.aexp:eval(env)
   env[self.name] = value
 end
 M.AssignStatement.__eq = lazyEq
@@ -153,8 +153,8 @@ function M.CompoundStatement:__tostring()
   return string.format("CompoundStatement(%s, %s)", self.first, self.second)
 end
 function M.CompoundStatement:eval(env)
-  self.first.eval(env)
-  self.second.eval(env)
+  self.first:eval(env)
+  self.second:eval(env)
 end
 M.CompoundStatement.__eq = lazyEq
 
@@ -172,10 +172,10 @@ function M.IfStatement:__tostring()
   )
 end
 function M.IfStatement:eval(env)
-  if self.condition.eval(env) then
-    self.trueStmt.eval(env)
+  if self.condition:eval(env) then
+    self.trueStmt:eval(env)
   elseif self.falseStmt ~= nil then
-    self.falseStmt.eval(env)
+    self.falseStmt:eval(env)
   end
 end
 M.IfStatement.__eq = lazyEq
@@ -188,8 +188,8 @@ function M.WhileStatement:__tostring()
   return string.format("WhileStatement(%s, %s)", self.condition, self.body)
 end
 function M.WhileStatement:eval(env)
-  while self.condition.eval(env) do
-    self.body.eval(env)
+  while self.condition:eval(env) do
+    self.body:eval(env)
   end
 end
 M.WhileStatement.__eq = lazyEq

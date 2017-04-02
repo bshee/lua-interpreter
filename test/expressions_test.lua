@@ -2,6 +2,8 @@ require("init")
 local t = require("unittest")
 local e = require("expressions")
 
+-- TODO: Add unit tests for each eval
+
 t.addTest("Equality compare", function()
   t.assertEqual(e.IntAexp(13), e.IntAexp(13))
 end)
