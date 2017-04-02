@@ -16,6 +16,9 @@ end)
 function M.IntAexp:__tostring()
   return string.format("IntAexp(%d)", self.value)
 end
+function M.IntAexp:eval(env)
+  return self.value
+end
 M.IntAexp.__eq = lazyEq
 
 M.VarAexp = class(function(v, name)
@@ -23,6 +26,13 @@ M.VarAexp = class(function(v, name)
 end)
 function M.VarAexp:__tostring()
   return string.format("VarAexp(%s)", self.name)
+end
+function M.VarAexp:eval(env)
+  if env[self.value] ~= nil then
+    return env[self.value]
+  else
+    return 0
+  end
 end
 M.VarAexp.__eq = lazyEq
 
@@ -33,6 +43,23 @@ M.BinopAexp = class(function(b, op, left, right)
 end)
 function M.BinopAexp:__tostring()
   return string.format("BinopAexp(%s, %s, %s)", self.op, self.left, self.right)
+end
+do
+  local opToFunction = {
+    ["+"] = function(left, right) return left + right end,
+    ["-"] = function(left, right) return left - right end,
+    ["*"] = function(left, right) return left * right end,
+    ["/"] = function(left, right) return left / right end,
+  }
+function M.BinopAexp:eval(env)
+  if opToFunction[self.op] ~= nil then
+    local leftValue = self.left.eval(env)
+    local rightValue = self.right.eval(env)
+    return opToFunction[self.op](leftValue, rightValue)
+  else
+    error("Unknown operator: " .. self.op)
+  end
+end
 end
 M.BinopAexp.__eq = lazyEq
 

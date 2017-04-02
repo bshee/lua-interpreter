@@ -144,7 +144,7 @@ M.processLogic = function(op)
   elseif op == 'or' then
     return ex.OrBexp
   else
-    error("Unknown logic operator: " + op)
+    error("Unknown logic operator: " .. op)
   end
 end
 
