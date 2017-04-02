@@ -145,7 +145,26 @@ t.addTest("aexp", function()
           ex.VarAexp("var"),
           ex.IntAexp(3)
         )
-      ), 6)
+      ), 
+    6)
+  )
+end)
+
+t.addTest("bexpRelop", function()
+  local tokens = il.lex("2 + 3 != 6")
+  local result = impPa.bexpRelop()(tokens, 1)
+  t.assertEqual(
+    result,
+    pa.Result(
+      ex.RelopBexp(
+        "!=",
+        ex.BinopAexp(
+          "+", ex.IntAexp(2), ex.IntAexp(3)
+        ),
+        ex.IntAexp(6)
+      ),
+      6
+    )
   )
 end)
 
