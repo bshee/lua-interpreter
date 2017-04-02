@@ -145,7 +145,7 @@ t.addTest("aexp", function()
           ex.VarAexp("var"),
           ex.IntAexp(3)
         )
-      ), 
+      ),
     6)
   )
 end)
@@ -208,7 +208,37 @@ t.addTest("assign", function()
     impPa.assignStmt()(tokens, 1),
     pa.Result(
       ex.AssignStatement("x", ex.IntAexp(1)),
-      4 
+      4
+    )
+  )
+end)
+
+t.addTest("stmtList", function()
+  local tokens = il.lex(
+    "while a = 1 do a := a - 1 end;" ..
+    "y := 1; " ..
+    "if y > 0 then z := 3 else z := 4 end"
+  )
+  local result = impPa.stmtList()(tokens, 1)
+
+  t.assertEqual(
+    result,
+    pa.Result(
+      ex.CompoundStatement(
+        ex.CompoundStatement(
+          ex.WhileStatement(
+            ex.RelopBexp("=", ex.VarAexp("a"), ex.IntAexp(1)),
+            ex.AssignStatement("a", ex.BinopAexp("-", ex.VarAexp("a"), ex.IntAexp(1)))
+          ),
+          ex.AssignStatement("y", ex.IntAexp(1))
+        ),
+        ex.IfStatement(
+          ex.RelopBexp(">", ex.VarAexp("y"), ex.IntAexp(0)),
+          ex.AssignStatement("z", ex.IntAexp(3)),
+          ex.AssignStatement("z", ex.IntAexp(4))
+        )
+      ),
+      30
     )
   )
 end)
