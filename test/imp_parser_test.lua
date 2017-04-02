@@ -202,4 +202,15 @@ t.addTest("bexp", function()
   )
 end)
 
+t.addTest("assign", function()
+  local tokens = il.lex("x := 1")
+  t.assertEqual(
+    impPa.assignStmt()(tokens, 1),
+    pa.Result(
+      ex.AssignStatement("x", ex.IntAexp(1)),
+      4 
+    )
+  )
+end)
+
 t.runTests()
