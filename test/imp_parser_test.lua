@@ -184,4 +184,22 @@ t.addTest("bexpNot", function()
   )
 end)
 
+t.addTest("bexp", function()
+  local tokens = il.lex("(a > b) or b < c and d >= 2")
+  local result = impPa.bexp()(tokens, 1)
+  t.assertEqual(
+    result,
+    pa.Result(
+      ex.OrBexp(
+        ex.RelopBexp(">", ex.VarAexp("a"), ex.VarAexp("b")),
+        ex.AndBexp(
+          ex.RelopBexp("<", ex.VarAexp("b"), ex.VarAexp("c")),
+          ex.RelopBexp(">=", ex.VarAexp("d"), ex.IntAexp(2))
+        )
+      ),
+      14
+    )
+  )
+end)
+
 t.runTests()
