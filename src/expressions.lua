@@ -45,12 +45,12 @@ function M.BinopAexp:__tostring()
   return string.format("BinopAexp(%s, %s, %s)", self.op, self.left, self.right)
 end
 do
-  local opToFunction = {
-    ["+"] = function(left, right) return left + right end,
-    ["-"] = function(left, right) return left - right end,
-    ["*"] = function(left, right) return left * right end,
-    ["/"] = function(left, right) return left / right end,
-  }
+local opToFunction = {
+  ["+"] = function(left, right) return left + right end,
+  ["-"] = function(left, right) return left - right end,
+  ["*"] = function(left, right) return left * right end,
+  ["/"] = function(left, right) return left / right end
+}
 function M.BinopAexp:eval(env)
   if opToFunction[self.op] ~= nil then
     local leftValue = self.left.eval(env)
@@ -71,6 +71,25 @@ end)
 function M.RelopBexp:__tostring()
   return string.format("RelopBexp(%s, %s, %s)", self.op, self.left, self.right)
 end
+do
+local opToFunction = {
+  ["<"] = function(left, right) return left < right end,
+  ["<="] = function(left, right) return left <= right end,
+  [">"] = function(left, right) return left > right end,
+  [">="] = function(left, right) return left >= right end,
+  ["="] = function(left, right) return left == right end,
+  ["!="] = function(left, right) return left ~= right end
+}
+function M.RelopBexp:eval(env)
+  if opToFunction[self.op] ~= nil then
+    local leftValue = self.left.eval(env)
+    local rightValue = self.right.eval(env)
+    return opToFunction[self.op](leftValue, rightValue)
+  else
+    error("Unknown operator: " .. self.op)
+  end
+end
+end
 M.RelopBexp.__eq = lazyEq
 
 M.AndBexp = class(function(r, left, right)
@@ -79,6 +98,11 @@ M.AndBexp = class(function(r, left, right)
 end)
 function M.AndBexp:__tostring()
   return string.format("AndBexp(%s, %s)", self.left, self.right)
+end
+function M.AndBexp:eval(env)
+  local leftValue = self.left.eval(env)
+  local rightValue = self.right.eval(env)
+  return leftValue and rightValue
 end
 M.AndBexp.__eq = lazyEq
 
@@ -89,6 +113,11 @@ end)
 function M.OrBexp:__tostring()
   return string.format("OrBexp(%s, %s)", self.left, self.right)
 end
+function M.OrBexp:eval(env)
+  local leftValue = self.left.eval(env)
+  local rightValue = self.right.eval(env)
+  return leftValue or rightValue
+end
 M.OrBexp.__eq = lazyEq
 
 M.NotBexp = class(function(bexp, exp)
@@ -96,6 +125,10 @@ M.NotBexp = class(function(bexp, exp)
 end)
 function M.NotBexp:__tostring()
   return string.format("NotBexp(%s)", self.exp)
+end
+function M.NotBexp:eval(env)
+  local value = self.exp.eval(env)
+  return not value
 end
 M.NotBexp.__eq = lazyEq
 
