@@ -139,6 +139,10 @@ end)
 function M.AssignStatement:__tostring()
   return string.format("AssignStatement(%s, %s)", self.name, self.aexp)
 end
+function M.AssignStatement:eval(env)
+  local value = self.aexp.eval(env)
+  env[self.name] = value
+end
 M.AssignStatement.__eq = lazyEq
 
 M.CompoundStatement = class(function(stmt, first, second)
@@ -147,6 +151,10 @@ M.CompoundStatement = class(function(stmt, first, second)
 end)
 function M.CompoundStatement:__tostring()
   return string.format("CompoundStatement(%s, %s)", self.first, self.second)
+end
+function M.CompoundStatement:eval(env)
+  self.first.eval(env)
+  self.second.eval(env)
 end
 M.CompoundStatement.__eq = lazyEq
 
@@ -163,6 +171,13 @@ function M.IfStatement:__tostring()
     self.falseStmt
   )
 end
+function M.IfStatement:eval(env)
+  if self.condition.eval(env) then
+    self.trueStmt.eval(env)
+  elseif self.falseStmt ~= nil then
+    self.falseStmt.eval(env)
+  end
+end
 M.IfStatement.__eq = lazyEq
 
 M.WhileStatement = class(function(stmt, condition, body)
@@ -171,6 +186,11 @@ M.WhileStatement = class(function(stmt, condition, body)
 end)
 function M.WhileStatement:__tostring()
   return string.format("WhileStatement(%s, %s)", self.condition, self.body)
+end
+function M.WhileStatement:eval(env)
+  while self.condition.eval(env) do
+    self.body.eval(env)
+  end
 end
 M.WhileStatement.__eq = lazyEq
 
