@@ -168,4 +168,20 @@ t.addTest("bexpRelop", function()
   )
 end)
 
+t.addTest("bexpNot", function()
+  local tokens = il.lex("not not 1 = 1")
+  local result = impPa.bexpNot()(tokens, 1)
+  t.assertEqual(
+    result,
+    pa.Result(
+      ex.NotBexp(
+        ex.NotBexp(
+          ex.RelopBexp("=", ex.IntAexp(1), ex.IntAexp(1))
+        )
+      ),
+      6
+    )
+  )
+end)
+
 t.runTests()
