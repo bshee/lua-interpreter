@@ -181,7 +181,7 @@ M.stmtListSeparator = pa.Process(
 )
 
 M.stmtList = function()
-  return pa.Exp(M.stmt(), M.stmtListSeprator)
+  return pa.Exp(M.stmt(), M.stmtListSeparator)
 end
 
 M.processIfStmt = function(parsed)
